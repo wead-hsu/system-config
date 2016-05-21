@@ -41,6 +41,8 @@ setopt inc_append_history
 
 alias ll='ls -lahG'
 alias du='du -sh'
-alias ls='ls -ahG'
+alias ls='ls -hG'
 alias du='du -sh'
 alias df='df -h'
+alias gs='git status'
+alias ga='git add'
