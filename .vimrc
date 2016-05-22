@@ -19,6 +19,7 @@ Plugin 'lilydjwg/colorizer'
 Plugin 'sjl/gundo.vim'
 Plugin 'tpope/vim-surround'
 Plugin 'Lokaltog/vim-easymotion'
+Plugin 'tmhedberg/SimpylFold'
 
 call vundle#end()            " required
 filetype plugin indent on    " required
