@@ -122,5 +122,5 @@ alias ls='ls -hG'
 alias du='du -sh'
 alias df='df -h'
 alias gs='git status'
-alias ga='git add' alias 
-#ohmyzsh="mate ~/.oh-my-zsh"
+alias ga='git add'
+#alias ohmyzsh="mate ~/.oh-my-zsh"
