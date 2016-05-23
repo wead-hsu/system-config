@@ -314,20 +314,6 @@ exec 'normal "+gP’
 exec "w! /tmp/input_data"
 endfunc
 
-"##############################################################################
-" When 'dd'ing blank lines, don't yank them into the register
-"##############################################################################
-
-function! DDWrapper()
-  if getline('.') =~ '^\s*$'
-    normal! "_dd
-  else
-    normal! dd
-  endif
-endfunction
-nnoremap <silent> dd :call DDWrapper()<CR>
-
-
 " Specific Filetypes
 " -----------------------------------------------------------------------------
 
