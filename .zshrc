@@ -123,4 +123,7 @@ alias du='du -sh'
 alias df='df -h'
 alias gs='git status'
 alias ga='git add'
+alias logfirst='ssh wead@192.168.1.2'
+alias logsecond='ssh -p 3000 wdxu@162.105.71.5'
+alias tmux='tmux -2'
 #alias ohmyzsh="mate ~/.oh-my-zsh"
