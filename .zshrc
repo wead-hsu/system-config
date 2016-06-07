@@ -127,3 +127,9 @@ alias logfirst='ssh wead@192.168.1.2'
 alias logsecond='ssh -p 3000 wdxu@162.105.71.5'
 alias tmux='tmux -2'
 #alias ohmyzsh="mate ~/.oh-my-zsh"
+
+##############################################################################
+# Language setting
+##############################################################################
+export LC_ALL=en_US.UTF-8
+export LANG=en_US.UTF-8
