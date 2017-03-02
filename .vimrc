@@ -20,6 +20,8 @@ Plugin 'sjl/gundo.vim'
 Plugin 'tpope/vim-surround'
 Plugin 'Lokaltog/vim-easymotion'
 Plugin 'tmhedberg/SimpylFold'
+"Plugin 'Valloric/YouCompleteMe'
+Plugin 'Shougo/neocomplete.vim'
 
 call vundle#end()            " required
 filetype plugin indent on    " required
@@ -51,11 +53,6 @@ set backupdir=~/.vim/tmp/backup
 set undodir=~/.vim/tmp/undo
 set viminfo='10,\"100,:20,%
 
-" Tab Settings
-set shiftwidth=2
-set softtabstop=2
-set expandtab
-
 " Formatting
 set number
 set ruler
@@ -71,22 +68,16 @@ set fenc=utf-8
 set fencs=utf-8,usc-bom,euc-jp,gb18030,gbk,gb2312,cp936
 
 " 与windows共享剪贴板
-set clipboard+=unnamed
+" set clipboard+=unnamed
  
 filetype on
 filetype plugin on
 filetype indent on
  
- 
- 
-" 语法高亮
+" Syntax highlight
 syntax on
  
-" 高亮字符，让其不受100列限制
-":highlight OverLength ctermbg=red ctermfg=white guibg=red guifg=white
-":match OverLength '\%101v.*'
- 
-" 状态行颜色
+" Status color
 highlight StatusLine guifg=SlateBlue guibg=Yellow
 highlight StatusLineNC guifg=Gray guibg=White
  
@@ -119,17 +110,18 @@ set formatoptions=tcrqn
 set autoindent
 set smartindent
 set cindent
-set tabstop=4
-set softtabstop=2
-set shiftwidth=2
+"set tabstop=4
+"set softtabstop=2
+"set shiftwidth=2
 set noexpandtab
 set wrap
 set smarttab
  
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" CTags的设定
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" 按照名称排序
+
+"##############################################################################
+" Ctags 
+"##############################################################################
+" Sort by the name
 let Tlist_Sort_Type = "name"
  
 " 在右侧显示窗口
@@ -208,8 +200,8 @@ let g:airline_mode_map = {
 
 let g:ctrlp_map = '<C-f>'
 let g:ctrlp_prompt_mappings = {
-  \ 'PrtSelectMove("j")':   ['<c-n>', '<down>'],
-  \ 'PrtSelectMove("k")':   ['<c-e>', '<up>'],
+  \ 'PrtSelectMove("j")':   ['<c-j>', '<down>'],
+  \ 'PrtSelectMove("k")':   ['<c-k>', '<up>'],
   \ 'PrtHistory(-1)':     [''],
   \ 'PrtCurEnd()':      [''],
   \ }
@@ -269,10 +261,86 @@ function! NeatFoldText()
   return foldtextstart . repeat(foldchar, winwidth(0)-foldtextlength) . foldtextend
 endfunction
 
-set foldmethod=expr
+set foldmethod=syntax
 set foldexpr=FoldLevels()
 set foldtext=NeatFoldText()
 nnoremap <Space> za
+
+
+"##############################################################################
+" neocomplete
+"##############################################################################
+
+"Note: This option must be set in .vimrc(_vimrc).  NOT IN .gvimrc(_gvimrc)!
+" Disable AutoComplPop.
+let g:acp_enableAtStartup = 0
+" Use neocomplete.
+let g:neocomplete#enable_at_startup = 1
+" Use smartcase.
+let g:neocomplete#enable_smart_case = 1
+" Set minimum syntax keyword length.
+let g:neocomplete#sources#syntax#min_keyword_length = 3
+
+" Define dictionary.
+let g:neocomplete#sources#dictionary#dictionaries = {
+    \ 'default' : '',
+    \ 'vimshell' : $HOME.'/.vimshell_hist',
+    \ 'scheme' : $HOME.'/.gosh_completions'
+        \ }
+
+" Define keyword.
+if !exists('g:neocomplete#keyword_patterns')
+    let g:neocomplete#keyword_patterns = {}
+endif
+let g:neocomplete#keyword_patterns['default'] = '\h\w*'
+
+" Plugin key-mappings.
+inoremap <expr><C-g>     neocomplete#undo_completion()
+inoremap <expr><C-l>     neocomplete#complete_common_string()
+
+" Recommended key-mappings.
+" <CR>: close popup and save indent.
+inoremap <silent> <CR> <C-r>=<SID>my_cr_function()<CR>
+function! s:my_cr_function()
+  return (pumvisible() ? "\<C-y>" : "" ) . "\<CR>"
+  " For no inserting <CR> key.
+  "return pumvisible() ? "\<C-y>" : "\<CR>"
+endfunction
+" <TAB>: completion.
+inoremap <expr><TAB>  pumvisible() ? "\<C-n>" : "\<TAB>"
+" <C-h>, <BS>: close popup and delete backword char.
+inoremap <expr><C-h> neocomplete#smart_close_popup()."\<C-h>"
+inoremap <expr><BS> neocomplete#smart_close_popup()."\<C-h>"
+" Close popup by <Space>.
+"inoremap <expr><Space> pumvisible() ? "\<C-y>" : "\<Space>"
+
+" AutoComplPop like behavior.
+"let g:neocomplete#enable_auto_select = 1
+
+" Shell like behavior(not recommended).
+"set completeopt+=longest
+"let g:neocomplete#enable_auto_select = 1
+"let g:neocomplete#disable_auto_complete = 1
+"inoremap <expr><TAB>  pumvisible() ? "\<Down>" : "\<C-x>\<C-u>"
+
+" Enable omni completion.
+autocmd FileType css setlocal omnifunc=csscomplete#CompleteCSS
+autocmd FileType html,markdown setlocal omnifunc=htmlcomplete#CompleteTags
+autocmd FileType javascript setlocal omnifunc=javascriptcomplete#CompleteJS
+autocmd FileType python setlocal omnifunc=pythoncomplete#Complete
+autocmd FileType xml setlocal omnifunc=xmlcomplete#CompleteTags
+
+" Enable heavy omni completion.
+if !exists('g:neocomplete#sources#omni#input_patterns')
+  let g:neocomplete#sources#omni#input_patterns = {}
+endif
+"let g:neocomplete#sources#omni#input_patterns.php = '[^. \t]->\h\w*\|\h\w*::'
+"let g:neocomplete#sources#omni#input_patterns.c = '[^.[:digit:] *\t]\%(\.\|->\)'
+"let g:neocomplete#sources#omni#input_patterns.cpp = '[^.[:digit:] *\t]\%(\.\|->\)\|\h\w*::'
+
+" For perlomni.vim setting.
+" https://github.com/c9s/perlomni.vim
+let g:neocomplete#sources#omni#input_patterns.perl = '\h\w*->\h\w*\|\h\w*::'
 
 " Functions
 " -----------------------------------------------------------------------------
@@ -304,7 +372,7 @@ endfunc
 map <F7> :call CompileRunPython()<CR>
 func! CompileRunPython()
 exec "w"
-exec "!python %<.py"
+exec "!CUDA_VISIBLE_DEVICES=cpu0 python3 %<.py"
 endfunc
 
 map <F9> :call SaveInputData()<CR>
@@ -412,3 +480,20 @@ function! Markdown()
   endfunction
   setlocal foldexpr=MarkdownFoldLevels()
 endfunction
+
+
+" Others
+" -----------------------------------------------------------------------------
+if exists('$TMUX')
+    set term=screen-256color
+endif
+
+if exists('$ITERM_PROFILE')
+  if exists('$TMUX') 
+	let &amp;t_SI = "<Esc>[3 q"
+	let &amp;t_EI = "<Esc>[0 q"
+  else
+	let &amp;t_SI = "<Esc>]50;CursorShape=1x7"
+	let &amp;t_EI = "<Esc>]50;CursorShape=0x7"
+  endif
+end
