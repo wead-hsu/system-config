@@ -5,6 +5,10 @@
 " Settings
 " -----------------------------------------------------------------------------
 
+"==============================================================================
+" Settings for Vundle
+"==============================================================================
+
 set nocompatible              
 filetype off                
 set rtp+=~/.vim/bundle/Vundle.vim
@@ -38,26 +42,44 @@ filetype plugin indent on    " required
 " Put your non-Plugin stuff after this line
 
 
+"==============================================================================
 " General Settings
+"==============================================================================
+
+" ignore files with certain extas
+set wildignore=*.swp,*.bak,*.pyc,*.class,.svn
+
+" highlight cursor column
+set cursorcolumn
+" highlight cursor row
+set cursorline
+
+" print the content in the terminal after exiting
+set t_ti= t_te=
+
+" general settings
 set nocompatible
-set history=100
+set history=2000
 set confirm
 set iskeyword+=_,$,@,%,#,- 
 set viminfo+=!
 
-" Temp Directories
-set nobackup                             " Enable backups
-set noswapfile                         " It's the 21st century, Vim
-set undofile                           " Enable persistent undo
+" set backup
+set backup
+set backupext=.bak
 set backupdir=~/.vim/tmp/backup
 set undodir=~/.vim/tmp/undo
+setlocal noswapfile
+
+" Enable persistent undo
+set undofile                           
+
+" Remember info about open buffers on close
 set viminfo='10,\"100,:20,%
 
 " Formatting
 set number
-set ruler
 set autoindent
-set showcmd
 set hidden
 set nocompatible
 
@@ -77,68 +99,107 @@ filetype indent on
 " Syntax highlight
 syntax on
  
+" read file automatically after modification
+" set autoread
+
 " Status color
 highlight StatusLine guifg=SlateBlue guibg=Yellow
 highlight StatusLineNC guifg=Gray guibg=White
+
+" settings for mouse
+set mouse=a
+set mousehide
+
+" setting for selection
+set selection=exclusive
+set selectmode=mouse,key
  
-set nobackup
-setlocal noswapfile
+" change the terminal's title
+set title
+
+" settings for backspace
+set backspace=2
+set whichwrap+=<,>,h,l
+ 
+" For regular expressions turn magic on
+set magic
+
+
+"==============================================================================
+" Display Settings
+"==============================================================================
+set ruler
+set rulerformat=%20(%2*%<%f%=\ %m%r\ %3l\ %c\ %p%%%)
+
+set showcmd
+
+" keep the minimum number of lines below or above the cursor
+set scrolloff=7
 set bufhidden=hide
 set linespace=0
 set wildmenu
-set rulerformat=%20(%2*%<%f%=\ %m%r\ %3l\ %c\ %p%%%)
 set cmdheight=2
-set backspace=2
-set whichwrap+=<,>,h,l
-set mouse=a
-set selection=exclusive
-set selectmode=mouse,key
 set shortmess=atI
 set report=0
 set noerrorbells
 set fillchars=vert:\ ,stl:\ ,stlnc:\
+
+" highlight the matching brackets
 set showmatch
 set matchtime=5
-set ignorecase
-set nohlsearch
+
+" highlight search matches
+set hlsearch
 set incsearch
+set ignorecase
+set smartcase
+
 set listchars=tab:\|\ ,trail:.,extends:>,precedes:<,eol:$
-set scrolloff=3
 set novisualbell
 set laststatus=2
 set formatoptions=tcrqn
+
+" settings for indent
 set autoindent
 set smartindent
 set cindent
-"set tabstop=4
-"set softtabstop=2
-"set shiftwidth=2
 set noexpandtab
-set wrap
-set smarttab
- 
 
-"##############################################################################
-" Ctags 
-"##############################################################################
-" Sort by the name
-let Tlist_Sort_Type = "name"
- 
-" 在右侧显示窗口
-let Tlist_Use_Right_Window = 1
- 
-" 压缩方式
-let Tlist_Compart_Format = 1
- 
-" 如果只有一个buffer，kill窗口也kill掉buffer
-let Tlist_Exist_OnlyWindow = 1
- 
-" 不要关闭其他文件的tags
-let Tlist_File_Fold_Auto_Close = 0
- 
-" 不要显示折叠树
-let Tlist_Enable_Fold_Column = 0
- 
+" do not new line
+set nowrap
+set smarttab
+
+
+"==============================================================================
+" Folding Styles
+"==============================================================================
+
+function! FoldLevels()
+  let thisline = getline(v:lnum)
+  if thisline != ''
+    let nextline = getline(v:lnum + 1)
+    if match(nextline, '-\{5,\}$') >= 0
+      return ">1"
+    endif
+  endif
+  return "="
+endfunction
+
+function! NeatFoldText()
+  let line = ' ' . substitute(getline(v:foldstart), '^\s*"\?\s*\|\s*"\?\s*{{' . '{\d*\s*', '', 'g') . ' '
+  let lines_count = v:foldend - v:foldstart + 1
+  let lines_count_text = '| ' . printf("%10s", lines_count . ' lines') . ' |'
+  let foldchar = matchstr(&fillchars, 'fold:\zs.')
+  let foldtextstart = strpart('»' . repeat(foldchar, v:foldlevel*2) . line, 0, (winwidth(0)*2)/3)
+  let foldtextend = lines_count_text . repeat(foldchar, 8)
+  let foldtextlength = strlen(substitute(foldtextstart . foldtextend, '.', 'x', 'g')) + &foldcolumn
+  return foldtextstart . repeat(foldchar, winwidth(0)-foldtextlength) . foldtextend
+endfunction
+
+set foldmethod=syntax
+set foldexpr=FoldLevels()
+set foldtext=NeatFoldText()
+nnoremap <Space> za
  
 if has("autocmd")
   autocmd FileType xml,html,c,cs,java,perl,shell,bash,cpp,python,vim,php,ruby set number
@@ -146,15 +207,27 @@ if has("autocmd")
   autocmd FileType java,c,cpp,cs vmap <C-o> <ESC>'<o
   autocmd FileType html,text,php,vim,c,java,xml,bash,shell,perl,python setlocal textwidth=100
   autocmd Filetype html,xml,xsl source $VIMRUNTIME/plugin/closetag.vim
+  autocmd Filetype python set tabstop=4 shiftwidth=4 softtabstop=4 smarttab expandtab shiftround
 endif "has("autocmd")
 
 
 " Plugins
 " -----------------------------------------------------------------------------
 
-"##############################################################################
+"==============================================================================
+" Ctags 
+"==============================================================================
+let Tlist_Sort_Type = "name"
+let Tlist_Use_Right_Window = 1
+let Tlist_Compart_Format = 1
+let Tlist_Exist_OnlyWindow = 1
+let Tlist_File_Fold_Auto_Close = 0
+let Tlist_Enable_Fold_Column = 0
+
+
+"==============================================================================
 " Colors & Airline
-"##############################################################################
+"==============================================================================
 
 " Temporary until I can get monokai working for terminal
 if has('gui_running')
@@ -194,9 +267,10 @@ let g:airline_mode_map = {
   \ '' : 'S·B',
   \ }
 
-"##############################################################################
+
+"==============================================================================
 " Ctrl-P
-"##############################################################################
+"==============================================================================
 
 let g:ctrlp_map = '<C-f>'
 let g:ctrlp_prompt_mappings = {
@@ -217,9 +291,10 @@ set wildignore+=*.flac,*.mp3
 set wildignore+=*.mkv
 set wildignore+=*.jpg,*.bmp,*.gif,*.png,*.jpeg
 
-"##############################################################################
+
+"==============================================================================
 " EasyMotion
-"##############################################################################
+"==============================================================================
 
 " Keys are written by optimizin via homerow, then tweaked by personal preference
 let g:EasyMotion_keys = 'hneiotsradluygpfwqkmvc;xzbjEIOTSRAHDLUYGPFWQKMVCXZBJ'
@@ -235,41 +310,10 @@ augroup tilthefs
   autocmd VimEnter * omap F T
 augroup END
 
-"##############################################################################
-" folding styles
-"##############################################################################
 
-function! FoldLevels()
-  let thisline = getline(v:lnum)
-  if thisline != ''
-    let nextline = getline(v:lnum + 1)
-    if match(nextline, '-\{5,\}$') >= 0
-      return ">1"
-    endif
-  endif
-  return "="
-endfunction
-
-function! NeatFoldText()
-  let line = ' ' . substitute(getline(v:foldstart), '^\s*"\?\s*\|\s*"\?\s*{{' . '{\d*\s*', '', 'g') . ' '
-  let lines_count = v:foldend - v:foldstart + 1
-  let lines_count_text = '| ' . printf("%10s", lines_count . ' lines') . ' |'
-  let foldchar = matchstr(&fillchars, 'fold:\zs.')
-  let foldtextstart = strpart('»' . repeat(foldchar, v:foldlevel*2) . line, 0, (winwidth(0)*2)/3)
-  let foldtextend = lines_count_text . repeat(foldchar, 8)
-  let foldtextlength = strlen(substitute(foldtextstart . foldtextend, '.', 'x', 'g')) + &foldcolumn
-  return foldtextstart . repeat(foldchar, winwidth(0)-foldtextlength) . foldtextend
-endfunction
-
-set foldmethod=syntax
-set foldexpr=FoldLevels()
-set foldtext=NeatFoldText()
-nnoremap <Space> za
-
-
-"##############################################################################
+"==============================================================================
 " neocomplete
-"##############################################################################
+"==============================================================================
 
 "Note: This option must be set in .vimrc(_vimrc).  NOT IN .gvimrc(_gvimrc)!
 " Disable AutoComplPop.
@@ -342,17 +386,12 @@ endif
 " https://github.com/c9s/perlomni.vim
 let g:neocomplete#sources#omni#input_patterns.perl = '\h\w*->\h\w*\|\h\w*::'
 
-" Functions
-" -----------------------------------------------------------------------------
 
-"###################################################################
+"==============================================================================
 " Functions
-"###################################################################
-"
-" 只在下列文件类型被侦测到的时候显示行号，普通文本文件不显示
-" F5编译和运行C程序，F6编译和运行C++程序
+"==============================================================================
  
-" C的编译和运行
+" Press F4 to run file as C file
 map <F4> :call CompileRunGcc()<CR>
 func! CompileRunGcc()
 exec "w"
@@ -360,7 +399,7 @@ exec "!gcc % -o %<"
 exec "! ./%<"
 endfunc
  
-" C++的编译和运行
+" Press F6 to run file as C++ file
 map <F6> :call CompileRunGpp()<CR>
 func! CompileRunGpp()
 exec "w"
@@ -368,132 +407,25 @@ exec "!g++ % -o %<"
 exec "! ./%<"
 endfunc
 
-" python的编译和运行
+" Press F7 to run file as C++ file
 map <F7> :call CompileRunPython()<CR>
 func! CompileRunPython()
 exec "w"
 exec "!CUDA_VISIBLE_DEVICES=cpu0 python3 %<.py"
 endfunc
 
+" Press F9 to save input data
 map <F9> :call SaveInputData()<CR>
 func! SaveInputData()
 exec "tabnew"
-exec 'normal "+gP’
+exec 'normal "+gP'
 exec "w! /tmp/input_data"
 endfunc
 
-" Specific Filetypes
-" -----------------------------------------------------------------------------
 
-let g:tex_flavor = "latex"
-
-augroup filetypes
-  autocmd!
-  autocmd BufNewFile,BufRead *.Rtex set filetype=rtex
-  autocmd BufNewFile,BufRead *.md,*.Rmd set filetype=markdown
-  autocmd BufNewFile,BufRead *.Rhtml,*.hbs set filetype=html
-  autocmd FileType plaintex,tex,rtex call TexMacros()
-"temp
-  autocmd FileType plaintex,tex,rtex set foldmethod=marker
-  autocmd FileType plaintex,tex,rtex nnoremap <silent> <Leader>s :call OpenPDF()<CR>
-  autocmd FileType python setlocal ts=4 sts=4 sw=4 expandtab
-  autocmd Filetype markdown call Markdown()
-augroup END
-
-function! s:Expr(default, repl)
-  " Allows abbreviations starting with \
-  if getline('.')[col('.')-2]=='\'
-    return "\<bs>".a:repl
-  else
-    return a:default
-  endif
-endfunction
-
-function! TexMacros()
-  " Map TeX macros
-  inoreabbrev mb <c-r>=<sid>Expr('mb', '\mathbb')<cr>
-  inoreabbrev mc <c-r>=<sid>Expr('mc', '\mathcal')<cr>
-  inoreabbrev mf <c-r>=<sid>Expr('mf', '\mathfrak')<cr>
-  inoreabbrev ms <c-r>=<sid>Expr('ms', '\mathscr')<cr>
-  inoreabbrev mrm <c-r>=<sid>Expr('mrm', '\mathrm')<cr>
-  inoreabbrev trm <c-r>=<sid>Expr('trm', '\textrm')<cr>
-  inoreabbrev op <c-r>=<sid>Expr('op', '\operatorname')<cr>
-  inoreabbrev tt <c-r>=<sid>Expr('tt', '\text')<cr>
-  inoreabbrev tbf <c-r>=<sid>Expr('tbf', '\textbf')<cr>
-  inoreabbrev tit <c-r>=<sid>Expr('tit', '\textit')<cr>
-  inoreabbrev tsc <c-r>=<sid>Expr('tsc', '\textsc')<cr>
-  inoreabbrev ttt <c-r>=<sid>Expr('ttt', '\texttt')<cr>
-  inoreabbrev bs <c-r>=<sid>Expr('bs', '\backslash')<cr>
-  inoreabbrev tbs <c-r>=<sid>Expr('tbs', '\textbackslash')<cr>
-  inoreabbrev hat <c-r>=<sid>Expr('hat', '\widehat')<cr>
-  inoreabbrev tilde <c-r>=<sid>Expr('tilde', '\widetilde')<cr>
-  inoreabbrev sub <c-r>=<sid>Expr('sub', '\subset')<cr>
-  inoreabbrev sup <c-r>=<sid>Expr('sup', '\supset')<cr>
-  inoreabbrev sube <c-r>=<sid>Expr('sube', '\subseteq')<cr>
-  inoreabbrev supe <c-r>=<sid>Expr('supe', '\supseteq')<cr>
-  inoreabbrev latex <c-r>=<sid>Expr('latex', '\LaTeX')<cr>
-endfunction
-
-function! OpenPDF()
-  " Open the pdf of the present working file
-  silent !zathura "%:r.pdf" &
-endfunction
-
-function! TeXCompile()
-  " Compile tex file in its working directory and remove auxiliary outputs
-  if &filetype=='tex'
-    " TODO: Set it to run in background somehow. Then if it never updates/errors, have a keybind to do rubber-info
-    "if @% == "[0-9]+-lecture-[0-9]{2}.tex"
-    "  compile master
-    "else
-      cd %:p:h
-      !xelatex "%"
-      silent !rm "%:r.aux"
-      silent !rm "%:r.log"
-      silent !rm "%:r.out"
-    "endif
-  endif
-  if &filetype=='rtex'
-    cd %:p:h
-    !Rscript -e "library(knitr); knit('%')"
-    !rubber -d "%:p:r.tex"
-    silent !rm "%:r.aux"
-    silent !rm "%:r.log"
-    silent !rm "%:r.out"
-    silent !rm "%:r.tex"
-  endif
-endfunction
-
-function! Markdown()
-  " Use folding style based on subsection headings
-  function! MarkdownFoldLevels()
-    let thisline = getline(v:lnum)
-    if match(thisline, '^##[^#]') >= 0
-      return ">1"
-    elseif thisline != ''
-      let nextline = getline(v:lnum + 1)
-      if match(nextline, '-\{5,\}$') >= 0
-        return ">1"
-      endif
-    endif
-    return "="
-  endfunction
-  setlocal foldexpr=MarkdownFoldLevels()
-endfunction
-
-
-" Others
-" -----------------------------------------------------------------------------
+"==============================================================================
+" Tmux 
+"==============================================================================
 if exists('$TMUX')
     set term=screen-256color
 endif
-
-if exists('$ITERM_PROFILE')
-  if exists('$TMUX') 
-	let &amp;t_SI = "<Esc>[3 q"
-	let &amp;t_EI = "<Esc>[0 q"
-  else
-	let &amp;t_SI = "<Esc>]50;CursorShape=1x7"
-	let &amp;t_EI = "<Esc>]50;CursorShape=0x7"
-  endif
-end
