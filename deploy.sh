@@ -72,6 +72,7 @@ CURRENT_DIR=`pwd`
 cp $CURRENT_DIR/.vimrc $HOME/.vimrc
 cp $CURRENT_DIR/.zshrc $HOME/.zshrc
 cp -r $CURRENT_DIR/.vim $HOME/.vim
+mkdir -R $HOME/.vim/tmp/backup
 
 echo "Step 3: install vundle"
 [ -z "$VUNDLE_URI" ] && VUNDLE_URI="git@github.com:VundleVim/Vundle.vim.git"
