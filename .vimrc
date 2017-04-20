@@ -246,8 +246,8 @@ let g:airline_theme='molokai'
   "autocmd!
   "autocmd VimEnter * AirlineTheme monokai
 "augroup END
-let g:airline_left_sep='⮀'
-let g:airline_right_sep='⮂'
+let g:airline_left_sep=''
+let g:airline_right_sep=''
 let g:airline#extensions#whitespace#enabled = 0
 "let g:airline_section_c='%f%m'
 let g:airline_section_x=''
