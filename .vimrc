@@ -55,7 +55,7 @@ set cursorcolumn
 set cursorline
 
 " print the content in the terminal after exiting
-set t_ti= t_te=
+" set t_ti= t_te=
 
 " general settings
 set nocompatible
@@ -166,7 +166,7 @@ set cindent
 set noexpandtab
 
 " do not new line
-set nowrap
+set wrap
 set smarttab
 
 
