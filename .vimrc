@@ -50,12 +50,12 @@ filetype plugin indent on    " required
 set wildignore=*.swp,*.bak,*.pyc,*.class,.svn
 
 " highlight cursor column
-set cursorcolumn
+"set cursorcolumn
 " highlight cursor row
 set cursorline
 
 " print the content in the terminal after exiting
-" set t_ti= t_te=
+"set t_ti= t_te=
 
 " general settings
 set nocompatible
@@ -228,44 +228,32 @@ let Tlist_Enable_Fold_Column = 0
 "==============================================================================
 " Colors & Airline
 "==============================================================================
-
-" Temporary until I can get monokai working for terminal
 if has('gui_running')
   colorscheme molokai
 else
   colorscheme Tomorrow-Night
 endif
+
 syntax enable
-set guioptions=
 set notitle
 set guifont=tewi\ 8
 set laststatus=2
-set noshowmode
 let g:airline_theme='molokai'
-"augroup airlineTheme
-  "autocmd!
-  "autocmd VimEnter * AirlineTheme monokai
-"augroup END
-let g:airline_left_sep=''
-let g:airline_right_sep=''
-let g:airline#extensions#whitespace#enabled = 0
-"let g:airline_section_c='%f%m'
-let g:airline_section_x=''
-let g:airline_section_y="%{strlen(&filetype)>0?&filetype:''}"
-let g:airline_section_z='%p%%'
+
+let g:airline#extensions#tabline#enabled = 1
 let g:airline_mode_map = {
-  \ '__' : '-',
-  \ 'n'  : 'N',
-  \ 'i'  : 'I',
-  \ 'R'  : 'R',
-  \ 'c'  : 'C',
-  \ 'v'  : 'V',
-  \ 'V'  : 'V·L',
-  \ '' : 'V·B',
-  \ 's'  : 'S',
-  \ 'S'  : 'S·L',
-  \ '' : 'S·B',
-  \ }
+      \ '__' : '-',
+      \ 'n'  : 'N',
+      \ 'i'  : 'I',
+      \ 'R'  : 'R',
+      \ 'c'  : 'C',
+      \ 'v'  : 'V',
+      \ 'V'  : 'V',
+      \ '' : 'V',
+      \ 's'  : 'S',
+      \ 'S'  : 'S',
+      \ '' : 'S',
+      \ }
 
 
 "==============================================================================
