@@ -90,7 +90,7 @@ set fenc=utf-8
 set fencs=utf-8,usc-bom,euc-jp,gb18030,gbk,gb2312,cp936
 
 " 与windows共享剪贴板
-" set clipboard+=unnamed
+set clipboard+=unnamed
  
 filetype on
 filetype plugin on
@@ -107,7 +107,7 @@ highlight StatusLine guifg=SlateBlue guibg=Yellow
 highlight StatusLineNC guifg=Gray guibg=White
 
 " settings for mouse
-set mouse=a
+"set mouse=a
 set mousehide
 
 " setting for selection
@@ -395,12 +395,20 @@ exec "!g++ % -o %<"
 exec "! ./%<"
 endfunc
 
-" Press F7 to run file as C++ file
-map <F7> :call CompileRunPython()<CR>
-func! CompileRunPython()
+" Press F7 to run file as python2 file
+map <F7> :call CompileRunPython2()<CR>
+func! CompileRunPython2()
+exec "w"
+exec "!CUDA_VISIBLE_DEVICES=cpu0 python2 %<.py"
+endfunc
+
+" Press F8 to run file as python3 file
+map <F7> :call CompileRunPython3()<CR>
+func! CompileRunPython3()
 exec "w"
 exec "!CUDA_VISIBLE_DEVICES=cpu0 python3 %<.py"
 endfunc
+
 
 " Press F9 to save input data
 map <F9> :call SaveInputData()<CR>
