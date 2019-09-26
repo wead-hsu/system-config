@@ -63,18 +63,18 @@ echo "Step 1: backing up current vim files"
 for i in $HOME/.vim $HOME/.vimrc $HOME/.gvimrc $HOME/.vimrc.bundles; do [ -e $i ] && [ ! -L $i ] && mv $i $i.$today; done
 for i in $HOME/.vim $HOME/.vimrc $HOME/.gvimrc $HOME/.vimrc.bundles; do [ -L $i ] && unlink $i ; done
 
-echo "Step 1: backing up current zsh files"
+echo "Step 2: backing up current zsh files"
 for i in $HOME/.zshrc; do [ -e $i ] && [ ! -L $i ] && mv $i $i.$today; done
 for i in $HOME/.zshrc; do [ -L $i ] && unlink $i ; done
 
-echo "Step2: install"
+echo "Step 3: install vim"
 CURRENT_DIR=`pwd`
 cp $CURRENT_DIR/.vimrc $HOME/.vimrc
 cp $CURRENT_DIR/.zshrc $HOME/.zshrc
 cp -r $CURRENT_DIR/.vim $HOME/.vim
 mkdir -p $HOME/.vim/tmp/backup
 
-echo "Step 3: install vundle"
+echo "Step 4: install vundle"
 [ -z "$VUNDLE_URI" ] && VUNDLE_URI="git@github.com:VundleVim/Vundle.vim.git"
 sync_repo       "$HOME/.vim/bundle/Vundle.vim" \
                 "$VUNDLE_URI" \
