@@ -207,7 +207,7 @@ if has("autocmd")
   autocmd FileType java,c,cpp,cs vmap <C-o> <ESC>'<o
   "autocmd FileType html,text,php,vim,c,java,xml,bash,shell,perl,python setlocal textwidth=100
   autocmd Filetype html,xml,xsl source $VIMRUNTIME/plugin/closetag.vim
-  autocmd Filetype python set tabstop=4 shiftwidth=4 softtabstop=4 smarttab expandtab shiftround
+  autocmd Filetype python set tabstop=2 shiftwidth=2 softtabstop=2 smarttab expandtab shiftround
 endif "has("autocmd")
 
 
@@ -403,7 +403,7 @@ exec "!CUDA_VISIBLE_DEVICES=cpu0 python2 %<.py"
 endfunc
 
 " Press F8 to run file as python3 file
-map <F7> :call CompileRunPython3()<CR>
+map <F8> :call CompileRunPython3()<CR>
 func! CompileRunPython3()
 exec "w"
 exec "!CUDA_VISIBLE_DEVICES=cpu0 python3 %<.py"
